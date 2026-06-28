@@ -165,17 +165,22 @@ tar_stream.on('finish', async () => {
       };
     }
 
-    writeSpecFile(npm_module, files, analysis, mainPackageBinaries, npm2rpm.release, npm2rpm.template, npm2rpm.output, npm2rpm.useLegacyPeerDeps);
+    const packageSafe = getRpmPackageName(npm_module.name).replace(/^nodejs-/, '');
+    const licensesFilename = analysis.bundled.length > 0
+      ? `${packageSafe}-${npm_module.version}-bundled-licenses.txt`
+      : null;
+
+    writeSpecFile(npm_module, files, analysis, mainPackageBinaries, npm2rpm.release, npm2rpm.template, npm2rpm.output, npm2rpm.useLegacyPeerDeps, licensesFilename);
     writeLockfile(npm_module, lockfile, npm2rpm.output);
   } else {
     // Single strategy - pass empty analysis (no dependencies)
     const analysis = { bundled: [], unbundled: [], unbundledRuntime: [], unbundledDev: [] };
-    writeSpecFile(npm_module, files, analysis, mainPackageBinaries, npm2rpm.release, npm2rpm.template, npm2rpm.output, npm2rpm.useLegacyPeerDeps);
+    writeSpecFile(npm_module, files, analysis, mainPackageBinaries, npm2rpm.release, npm2rpm.template, npm2rpm.output, npm2rpm.useLegacyPeerDeps, null);
   }
 })
 
-function writeSpecFile(npmModule, files, analysis, mainPackageBinaries, release, template, specDir, use_legacy_peer_deps) {
-  const content = specFileGenerator(npmModule, files, analysis, mainPackageBinaries, release, template, use_legacy_peer_deps);
+function writeSpecFile(npmModule, files, analysis, mainPackageBinaries, release, template, specDir, use_legacy_peer_deps, licensesFilename) {
+  const content = specFileGenerator(npmModule, files, analysis, mainPackageBinaries, release, template, use_legacy_peer_deps, licensesFilename);
   const filename = path.join(specDir, `${getRpmPackageName(npmModule.name)}.spec`);
   fs.writeFileSync(filename, content);
   return filename;

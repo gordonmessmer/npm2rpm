@@ -94,6 +94,14 @@ rm -rf $PREP_TEMP
 npm ci {{{LEGACY_PEER_DEPS}}}--offline --cache %{_builddir}/%{npm_cache_dir} --omit optional
 # Re-install the (possibly patched) main package over the lockfile version
 npm install {{{LEGACY_PEER_DEPS}}}--offline --cache %{_builddir}/%{npm_cache_dir} "%{_builddir}/%{npm_name}-%{version}.tgz"
+{{#if LICENSES_FILENAME}}
+
+# Extract bundled dependency licenses
+find node_modules -name "package.json" -exec jq -r '.license | strings' {} \; > {{{LICENSES_FILENAME}}}
+find node_modules -name "package.json" -exec jq -r '.license | objects | .type' {} \; >> {{{LICENSES_FILENAME}}} 2>/dev/null
+find node_modules -name "package.json" -exec jq -r '.licenses[]? | .type' {} \; >> {{{LICENSES_FILENAME}}} 2>/dev/null
+sort -u -o {{{LICENSES_FILENAME}}} {{{LICENSES_FILENAME}}}
+{{/if}}
 
 %install
 mkdir -p %{buildroot}%{nodejs_sitelib}/%{npm_name}
@@ -125,6 +133,9 @@ rm -rf %{buildroot} %{npm_cache_dir}
 {{#each LICENSEFILES}}
 %license node_modules/%{npm_name}/{{{.}}}
 {{/each}}
+{{#if LICENSES_FILENAME}}
+%license {{{LICENSES_FILENAME}}}
+{{/if}}
 {{#each DOCFILES}}
 %doc node_modules/%{npm_name}/{{{.}}}
 {{/each}}
