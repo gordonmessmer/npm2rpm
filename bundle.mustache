@@ -124,6 +124,9 @@ chmod 0755 %{buildroot}%{nodejs_sitelib}/%{npm_name}/{{{this}}}
 ln -sf %{nodejs_sitelib}/%{npm_name}/{{{this}}} %{buildroot}%{_bindir}/{{{@key}}}
 {{/each}}
 
+%check
+%{__nodejs} -e 'require("./")'
+
 %clean
 rm -rf %{buildroot} %{npm_cache_dir}
 
