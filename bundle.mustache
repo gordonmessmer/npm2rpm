@@ -2,7 +2,7 @@
 
 Name: {{{RPM_PACKAGE_NAME}}}
 Version: {{{VERSION}}}
-Release: {{{RELEASE}}}%{?dist}
+Release: {{{RELEASE}}}
 Summary: {{{SUMMARY}}}
 License: {{{LICENSETYPE}}}
 Group: Development/Libraries
@@ -145,4 +145,4 @@ rm -rf %{buildroot} %{npm_cache_dir}
 %doc node_modules/%{npm_name}/{{{.}}}
 {{/each}}
 
-%changelog
+%autochangelog
