@@ -10,6 +10,7 @@ URL: {{{PROJECTURL}}}
 {{#each SOURCES}}
 {{{.}}}
 {{/each}}
+BuildRequires: nodejs-devel
 BuildRequires: npm >= 7
 BuildRequires: nodejs-packaging
 # The prep section runs node directly, so this is needed unconditionally. It
@@ -27,6 +28,7 @@ Provides: npm(%{npm_name}) = %{version}
 {{#each PROVIDES}}
 Provides: bundled(npm({{{name}}})) = {{{version}}}
 {{/each}}
+Requires: nodejs
 {{#each UNBUNDLED_REQUIRES}}
 Requires: npm({{{.}}})
 {{/each}}
