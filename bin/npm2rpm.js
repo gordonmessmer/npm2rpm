@@ -26,7 +26,7 @@ npm2rpm
 .option('-t, --template [template]', "RPM .spec template to use")
 .option('-o, --output [directory]', "Directory to output files to")
 .option('-p, --use-legacy-peer-deps [useLegacyPeerDeps]', "Adds --legacy-peer-deps during npm install")
-.option('--check-binaries', 'Check for native binaries and WebAssembly (required for Fedora packaging)')
+.option('--no-check-binaries', 'Skip checking for native binaries and WebAssembly (not recommended for Fedora)')
 .option('--concurrency <number>', 'Number of parallel dependency downloads (default: 5)', parseInt)
 .option('--verbose-binaries', 'Show detailed binary detection output')
 .parse(process.argv);
@@ -82,7 +82,7 @@ tar_stream.on('finish', async () => {
     fs.mkdirSync(npm2rpm.output);
   }
 
-  // Binary checking is OPT-IN via --check-binaries flag
+  // Binary checking is ON by default (use --no-check-binaries to disable)
   let mainPackageBinaries = null;
   let cacheDir = null; // Cache directory for dependency tarballs
   let cacheDirCleanup = null; // Cleanup callback for temp cache directory
