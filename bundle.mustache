@@ -61,6 +61,14 @@ fs.writeFileSync("package.json", JSON.stringify({
 }, null, 2) + "\n");
 '
 
+# Extract Source0 to allow patching
+PREP_TEMP=$(mktemp -d)
+tar xzf %{SOURCE0} -C $PREP_TEMP
+# Apply patches and remove binaries here if needed
+tar czf %{_builddir}/%{npm_name}-%{version}.tgz -C $PREP_TEMP package
+npm cache add --cache %{npm_cache_dir} "%{_builddir}/%{npm_name}-%{version}.tgz"
+rm -rf $PREP_TEMP
+
 %build
 npm ci {{{LEGACY_PEER_DEPS}}}--offline --cache %{_builddir}/%{npm_cache_dir} --omit optional
 
